@@ -2,7 +2,7 @@ import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 
 const config: HardhatUserConfig = {
-  defaultNetwork: "localhost",
+  // defaultNetwork: "localhost",
   networks: {
     hardhat: {},
     localhost: {
