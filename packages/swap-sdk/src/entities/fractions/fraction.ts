@@ -24,7 +24,9 @@ const toFixedRounding = {
 }
 
 export class Fraction {
+  // 分子
   public readonly numerator: JSBI
+  // 分母
   public readonly denominator: JSBI
 
   public constructor(numerator: BigintIsh, denominator: BigintIsh = ONE) {
@@ -33,19 +35,23 @@ export class Fraction {
   }
 
   // performs floor division
+  // Division 除法 c = a / b
   public get quotient(): JSBI {
     return JSBI.divide(this.numerator, this.denominator)
   }
 
   // remainder after floor division
+  // c = a % b	求余
   public get remainder(): Fraction {
     return new Fraction(JSBI.remainder(this.numerator, this.denominator), this.denominator)
   }
 
+  // 分子 分母 反转
   public invert(): Fraction {
     return new Fraction(this.denominator, this.numerator)
   }
 
+  // 加法 c = a + b
   public add(other: Fraction | BigintIsh): Fraction {
     const otherParsed = other instanceof Fraction ? other : new Fraction(parseBigintIsh(other))
     if (JSBI.equal(this.denominator, otherParsed.denominator)) {

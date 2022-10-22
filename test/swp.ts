@@ -29,7 +29,7 @@ describe("swap", function () {
         it("Should set the right unlockTime", async function () {
             const { factory } = await loadFixture(deploySwap);
             console.log("Deploy pancakeFactory:",factory.address,"INIT_CODE_PAIR_HASH:",await factory.INIT_CODE_PAIR_HASH());
-
+            expect("").equal
         });
     });
 
