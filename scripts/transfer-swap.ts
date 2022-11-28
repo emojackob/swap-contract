@@ -3,7 +3,7 @@ import {Fraction,Currency, CurrencyAmount, Percent, Price, Token, TokenAmount,Ro
 import JSBI from "jsbi";
 import {SignerWithAddress} from "@nomiclabs/hardhat-ethers/src/signers";
 import {Contract} from "@ethersproject/contracts";
-import {getAllCommonPairs} from "./deps/Trades";
+import {getAllPairsAddress} from "../src/Trades";
 
 const now = () => {
     return Date.parse(new Date().toString())+600
@@ -12,10 +12,12 @@ const now = () => {
 
 // swapExactTokensForTokens 根据精确的token交换尽量多的token
 // swapTokensForExactTokens 使用尽量少的token交换精确的token
-// swapExactETHForTokens 根据精确的ETH交换尽量多的token
+
 // swapTokensForExactETH 使用尽量少的token交换精确的ETH
 // swapExactTokensForETH 根据精确的token交换尽量多的ETH
+// swapExactETHForTokens 根据精确的ETH交换尽量多的token
 // swapETHForExactTokens 使用尽量少的ETH交换精确的token
+
 // swapExactTokensForTokensSupportingFeeOnTransferTokens 支持收税的根据精确的token交换尽量多的token
 // swapExactETHForTokensSupportingFeeOnTransferTokens 支持收税的根据精确的ETH交换尽量多的token
 // swapExactTokensForETHSupportingFeeOnTransferTokens 支持收税的根据精确的token交换尽量多的ETH
@@ -43,14 +45,21 @@ async function params() {
     const BTC = await ethers.getContractFactory("HBTC");
     const btc = await BTC.attach("0xCA0c66F6BAcE642a274B28773bB5Ba57c919E245");
 
+    const Multicall = await ethers.getContractFactory("Multicall");
+    const multicall = await Multicall.attach("0x18CCcE28F097749d682F76CD470C4d5626C047Be");
 
-    return {owner,router,factory,usdt,whec,btc}
+    return {owner,router,factory,multicall,usdt,whec,btc}
 }
 
 const main = async () => {
-    const {owner,router,factory,usdt,whec,btc} = await params();
+    const {owner,router,factory,multicall,usdt,whec,btc} = await params();
 
-    await routerSwapExactETHForTokens("1",usdt,10,owner,router,factory)
+    // 单个方法调用案例
+    // await routerSwapExactETHForTokens("1",usdt,10,owner,router,factory)
+
+    // 完整封装调用案例
+    swapExactETHForTokens("1",usdt,10,owner,router,factory,multicall)
+
 };
 
 
@@ -87,24 +96,6 @@ async function routerSwapExactETHForTokens(userInputHEC: string,//用户输入�
         ethers.utils.parseEther(userInputHEC),[WHEC[ChainId.MAINNET].address,usdtContract.address])
     console.log("最大换取数量",ethers.utils.formatEther(outMaxAmounts[1]))
 
-    //计算显示价格影响百分比
-    //构造合约对象
-    const PAIRCON = await ethers.getContractFactory("PancakePair");
-    const pairContract = await PAIRCON.attach(pairAddress);
-    //调用交易合约对查询流动性供应
-    const reserves= await pairContract.getReserves()
-    const inputTokenAmount = new TokenAmount(WHEC[ChainId.MAINNET],reserves[0])
-    const outputTokenAmount = new TokenAmount(usdtToken,reserves[1])
-
-    const pair = new Pair(inputTokenAmount,outputTokenAmount)
-    const rou = new Route([pair],HEC,usdtToken)
-
-    const inputCurrenAmount = new CurrencyAmount(HEC,ethers.utils.parseEther(userInputHEC).toString())
-    const outCurrenAmount = new CurrencyAmount(usdtToken,outMaxAmounts[1].toString())
-    console.log("price",Price.fromRoute(rou).toFixed(8,undefined,0))
-    await getAllCommonPairs(HEC,usdtToken)
-    return
-
     //计算显示最小输出token数量
     //滑点计算
     const slippageTolerance = new Percent(JSBI.BigInt(userInputAllowedSlippage * 100), BIPS_BASE)
@@ -131,7 +122,25 @@ async function routerSwapExactETHForTokens(userInputHEC: string,//用户输入�
     console.log("usdt 余额: ",ethers.utils.formatEther(await usdtContract.balanceOf(owner.address)))
 }
 
+async function swapExactETHForTokens(userInputHEC: string,//用户输入的hec数量
+                        usdtContract: Contract,//token合约
+                        userInputAllowedSlippage: number,//用户输入的滑点百分比
+                        owner: SignerWithAddress,//地址帐号带签名
+                        routerContract: Contract, //路由合约地址
+                        factoryContract: Contract,//工厂合约地址
+                                     multicall: Contract,//合并调用合约
+) {
+    //包装的token对象，方便计算
+    const usdtToken = new Token(627,usdtContract.address,18,"USDT","USDT","https://xxxx")
 
+    //获取所有交易对地址
+    const pairAddress =  getAllPairsAddress(HEC,usdtToken)
+    console.log(pairAddress)
+
+    //调用multipleContract检查交易对状态
+
+    return
+}
 
 // async function asd() {
 //     //检测USDT是否授权router花费

@@ -25,33 +25,33 @@ const main = async () => {
     // const usdt = await USDT.deploy();
     // console.log("Deploy usdt:", usdt.address);
     //
-    // // WHEC
-    // const WHEC = await ethers.getContractFactory("WHEC");
-    // const whec = await WHEC.deploy();
-    // console.log("Deploy whec:", whec.address);
-    //
-    //
+    // WHEC
+    const WHEC = await ethers.getContractFactory("WHEC");
+    const whec = await WHEC.deploy();
+    console.log("Deploy whec:", whec.address);
+    // //
+    // //
     // // MultiCall
-    // const MULTICALL = await ethers.getContractFactory("Multicall");
-    // const multicall = await MULTICALL.deploy();
-    // console.log("Deploy multicall:",multicall.address);
-    //
+    const MULTICALL = await ethers.getContractFactory("Multicall");
+    const multicall = await MULTICALL.deploy();
+    console.log("Deploy multicall:",multicall.address);
+    // //
     // // PancakeFactory
-    // const PancakeFactory = await ethers.getContractFactory("PancakeFactory");
-    // const pancakeFactory = await PancakeFactory.deploy(owner.address);
-    // console.log("Deploy pancakeFactory:",pancakeFactory.address,"INIT_CODE_PAIR_HASH:",await pancakeFactory.INIT_CODE_PAIR_HASH());
-    // console.log("npx hardhat verify  --network localhost ",pancakeFactory.address," ",owner.address)
+    const PancakeFactory = await ethers.getContractFactory("PancakeFactory");
+    const pancakeFactory = await PancakeFactory.deploy(owner.address);
+    console.log("Deploy pancakeFactory:",pancakeFactory.address,"INIT_CODE_PAIR_HASH:",await pancakeFactory.INIT_CODE_PAIR_HASH());
+    console.log("npx hardhat verify  --network localhost ",pancakeFactory.address," ",owner.address)
 
 
     // PancakeRouter01
-    const PancakeRouter01 = await ethers.getContractFactory("PancakeRouter01");
-    const pancakeRouter01 = await PancakeRouter01.deploy("0xA5F093F5fBbec08dd54C21056CD1034Dc86B8fdc","0xB7a8CB0293165eB3F06d99b17E9d7d8d9DeF8CbD");
-    console.log("Deploy pancakeRouter01:",pancakeRouter01.address);
-
-
+    // const PancakeRouter01 = await ethers.getContractFactory("PancakeRouter01");
+    // const pancakeRouter01 = await PancakeRouter01.deploy("0xA5F093F5fBbec08dd54C21056CD1034Dc86B8fdc","0xB7a8CB0293165eB3F06d99b17E9d7d8d9DeF8CbD");
+    // console.log("Deploy pancakeRouter01:",pancakeRouter01.address);
+    //
+    //
     // PancakeRouter
     const PancakeRouter = await ethers.getContractFactory("PancakeRouter");
-    const pancakeRouter = await PancakeRouter.deploy("0xA5F093F5fBbec08dd54C21056CD1034Dc86B8fdc","0xB7a8CB0293165eB3F06d99b17E9d7d8d9DeF8CbD");
+    const pancakeRouter = await PancakeRouter.deploy(pancakeFactory.address,whec.address);
     console.log("Deploy pancakeRouter:",pancakeRouter.address);
 
     // const IterableMapping = await ethers.getContractFactory("IterableMapping");

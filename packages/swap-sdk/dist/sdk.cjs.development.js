@@ -676,7 +676,8 @@ var Pair = /*#__PURE__*/function () {
   /**
    * Return the price of the given token in terms of the other token in the pair.
    * @param token token to return price of
-   */_proto.priceOf = function priceOf(token) {
+   */
+  _proto.priceOf = function priceOf(token) {
     !this.involvesToken(token) ?  invariant(false, 'TOKEN')  : void 0;
     return token.equals(this.token0) ? this.token0Price : this.token1Price;
   }
@@ -2035,12 +2036,14 @@ var Fetcher = /*#__PURE__*/function () {
     } catch (e) {
       return Promise.reject(e);
     }
-  } /**
-     * Fetches information about a pair and constructs a pair from the given two tokens.
-     * @param tokenA first token
-     * @param tokenB second token
-     * @param provider the provider to use to fetch the data
-     */;
+  }
+  /**
+   * Fetches information about a pair and constructs a pair from the given two tokens.
+   * @param tokenA first token
+   * @param tokenB second token
+   * @param provider the provider to use to fetch the data
+   */
+  ;
   Fetcher.fetchPairData = function fetchPairData(tokenA, tokenB, provider) {
     try {
       if (provider === undefined) provider = providers.getDefaultProvider(networks.getNetwork(tokenA.chainId));
